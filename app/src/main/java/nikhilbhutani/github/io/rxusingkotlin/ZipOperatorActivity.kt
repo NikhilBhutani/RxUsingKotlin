@@ -3,8 +3,11 @@ package nikhilbhutani.github.io.rxusingkotlin
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import java.lang.Thread.currentThread
 
 class ZipOperatorActivity : AppCompatActivity() {
 
@@ -12,6 +15,7 @@ class ZipOperatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
          setContentView(R.layout.activity_main)
 
+        getIntegersSample()
 
         sequentialExecutionOfObservablesZip()
 
@@ -19,6 +23,19 @@ class ZipOperatorActivity : AppCompatActivity() {
 
 
     }
+
+    private fun getIntegersSample() {
+
+        Observable.just(1, 2, 3, 4, 5)
+            .doOnNext{ println("Emitting item " + it + " on: " + currentThread().getName())}
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.computation())
+            .subscribe{println("Consuming item " + it + " on: " + currentThread().getName())}
+
+
+
+     }
 
 
     private fun sequentialExecutionOfObservablesZip() {
